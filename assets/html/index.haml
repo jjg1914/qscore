@@ -1,0 +1,17 @@
+!!!
+%html(lang="en")
+  %head
+    %meta(charset="UTF-8")
+    %meta(name="viewport" content="initial-scale=1")
+    %title Application
+    %link(href="index.css" rel="stylesheet" type="text/css" media="all")
+    - CSS_ASSETS.each do |e|
+      %link(href=e rel="stylesheet" type="text/css" media="all")
+    %script(src="bower_components/angular/angular.js" type="text/javascript")
+    %script(src="bower_components/angular-route/angular-route.js" type="text/javascript")
+    %script(src="index.js" type="text/javascript")
+    - JS_ASSETS.each do |e|
+      %script(src=e type="text/javascript")
+  %body(ng-app="app")
+    %main
+      %h1 Application
