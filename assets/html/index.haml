@@ -14,4 +14,69 @@
       %script(src=e type="text/javascript")
   %body(ng-app="app")
     %main
-      %h1 Application
+      .timer-main.centered
+        .centered-inner 2:23:5
+        .timer-full
+          19:20:02
+      .timer-floor.centered
+        .centered-inner 0:06:5
+      .score-board
+        .score.score-selected.centered>
+          .centered-inner 30
+        .score.centered>
+          .centered-inner 50
+      %ol.details.details-selected
+        %li.detail.detail-catch
+          .detail-time>
+            .detail-time-value 10:10:5
+          .detail-definition.detail-definition-catch> Catch
+        %li.detail
+          .detail-time>
+            .detail-time-value 8:20:3
+            %progress.card-duration(value="55" max="60")
+          .detail-definition.detail-definition-yellow-card> Card
+        %li.detail
+          .detail-time>
+            .detail-time-value 8:08:3
+          .detail-definition.detail-definition-goal> Goal
+        %li.detail
+          .detail-time>
+            .detail-time-value 7:42:0
+          .detail-definition.detail-definition-goal> Goal
+        %li.detail
+          .detail-definition.detail-definition-red-card> Card
+          .detail-time>
+            .detail-time-value 6:32:4
+        %li.detail
+          .detail-time>
+            .detail-time-value 6:15:3
+          .detail-definition.detail-definition-goal> Goal
+        %li.detail
+          .detail-time>
+            .detail-time-value 5:31:4
+          .detail-definition.detail-definition-goal> Goal
+        %li.detail
+          .detail-definition.detail-definition-goal> Goal
+          .detail-time>
+            .detail-time-value 4:20:0
+        %li.detail
+          .detail-time>
+            .detail-time-value 2:40:0
+          .detail-definition.detail-definition-goal> Goal
+        %li.detail
+          .detail-definition.detail-definition-goal> Goal
+          .detail-time>
+            .detail-time-value 1:20:5
+        %li.detail
+          .detail-definition.detail-definition-goal> Goal
+          .detail-time>
+            .detail-time-value 0:30:2
+      .controlls
+        .control.control-goal.centered>
+          .centered-inner +10
+        .control.control-ungoal.centered>
+          .centered-inner -10
+        .control.control-catch.centered>
+          .centered-inner Catch
+        .control.control-card.centered>
+          .centered-inner Card
