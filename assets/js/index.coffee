@@ -1,8 +1,5 @@
 app = angular.module "app", [ "ngRoute" ]
 
-class Goal
-  constructor: (@team_id,@at) ->
-
 app.factory "timer", ($interval) ->
   class Timer
     constructor: (@t = 0)->
@@ -63,36 +60,71 @@ app.filter "timerFormat", ->
 
 app.controller "AppController", ($scope,$timeout,timer) ->
   goals = []
+  catches = []
   timeout = null
 
   $scope.timer = new timer
 
-  $scope.details = -> goals.concat([]).reverse()
+  $scope.floor = 18 * 60 * 1000
+
+  $scope.details = ->
+    goals.concat(catches).sort (a,b) ->
+      if a.at < b.at
+        1
+      else if a.at > b.at
+        -1
+      else 0
+
+  $scope.selected = -2
 
   $scope.goal = (team_id) ->
+    goals.push
+      team_id: team_id
+      at: $scope.timer.ellapsed()
+      type: "goal"
+      name: "Goal"
+
+  $scope.ungoal = (team_id) ->
+    for goal,i in goals by -1
+      if goal.team_id == team_id
+        goals.splice i, 1
+        break
+
+  $scope.catch = (team_id) ->
+    catches.push
+      team_id: team_id
+      at: $scope.timer.ellapsed()
+      type: "catch"
+      name: "Catch"
+    if $scope.score(0) == $scope.score(1)
+      $scope.overtime = $scope.timer.ellapsed() + (5 * 60 * 1000)
+      $scope.floor = $scope.timer.ellapsed() + (30 * 1000)
+
+  $scope.scoreMouseup = (team_id) ->
     if timeout?
       $timeout.cancel timeout
       timeout = null
+      $scope.goal(team_id)
 
-      goals.push new Goal team_id, $scope.timer.ellapsed()
-
-
-  $scope.ungoal = (team_id) ->
-    unless timeout?
+  $scope.scoreMousedown = (team_id) ->
+    if $scope.selected >= 0
+      $scope.selected = team_id
+    else unless timeout? or not $scope.timer.isRunning()
       timeout = $timeout ->
         timeout = null
-
-        for goal,i in goals by -1
-          if goal.team_id == team_id
-            goals.splice i, 1
-            break
+        $scope.ungoal(team_id)
       , 500
 
   $scope.score = (team_id) ->
     score = 0
-    for goal in goals
-      if goal.team_id == team_id
-        score += 10
+    score += 10 for goal in goals when goal.team_id == team_id
+    score += 30 for c in catches when c.team_id == team_id
     return score
-        
-    
+
+  $scope.toggle = ->
+    if $scope.timer.isRunning()
+      $scope.timer.stop()
+      $scope.selected += 2 unless $scope.selected >= 0
+    else
+      $scope.timer.start()
+      $scope.selected -= 2 unless $scope.selected < 0

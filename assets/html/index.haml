@@ -14,25 +14,21 @@
       %script(src=e type="text/javascript")
   %body(ng-app="app" ng-controller="AppController")
     %main
-      .timer-main.centered(ng-click="timer.toggle()")
+      .timer-main.centered.action(ng-click="toggle()")
         .centered-inner {{ timer.ellapsed(overtime) | timerFormat }}
         .timer-full(ng-if="overtime") {{ timer.ellapsed() | timerFormat }}
       .timer-floor.centered
-        .centered-inner {{ timer.ellapsed(18 * 60 * 1000) | timerFormat }}
+        .centered-inner {{ timer.ellapsed(floor) | timerFormat }}
       .score-board
-        .score.centered(ng-mouseup="goal(0)"
-                        ng-mousedown="ungoal(0)"
-                        ng-class="{'score-selected': selected == 0}")>
+        .score.centered.action(ng-mouseup="scoreMouseup(0)"
+                               ng-mousedown="scoreMousedown(0)"
+                               ng-class="{'score-selected': selected == 0}")>
           .centered-inner {{ score(0) }}
-        .score.centered(ng-mouseup="goal(1)"
-                        ng-mousedown="ungoal(1)"
-                        ng-class="{'score-selected': selected == 1}")>
+        .score.centered.action(ng-mouseup="scoreMouseup(1)"
+                               ng-mousedown="scoreMousedown(1)"
+                               ng-class="{'score-selected': selected == 1}")>
           .centered-inner {{ score(1) }}
-      %ol.details(ng-class="{'details-selected': selected}")
-        -#%li.detail.detail-catch
-          .detail-time>
-            .detail-time-value 10:10:5
-          .detail-definition.detail-definition-catch> Catch
+      %ol.details(ng-class="{'details-selected': selected >= 0}")
         -#%li.detail
           .detail-time>
             .detail-time-value 8:20:3
@@ -42,17 +38,20 @@
           .detail-definition.detail-definition-red-card> Card
           .detail-time>
             .detail-time-value 6:32:4
-        %li.detail(ng-repeat="detail in details()")
-          .detail-definition.detail-definition-goal(ng-if="detail.team_id == 0")> Goal
-          .detail-time>
+        %li.detail(ng-repeat="detail in details()"
+                   ng-class="{'detail-catch': detail.type == 'catch'}")
+          .detail-time(ng-if="detail.team_id == 1")>
             .detail-time-value {{ detail.at | timerFormat }}
-          .detail-definition.detail-definition-goal(ng-if="detail.team_id == 1")> Goal
-      .controlls(ng-if="selected")
-        .control.control-goal.centered>
+          .detail-definition(class="detail-definition-{{ detail.type }}")
+            {{ detail.name }}
+          .detail-time(ng-if="detail.team_id == 0")>
+            .detail-time-value {{ detail.at | timerFormat }}
+      .controlls(ng-if="selected >= 0")
+        .control.control-goal.centered.action(ng-click="goal(selected)")>
           .centered-inner +10
-        .control.control-ungoal.centered>
+        .control.control-ungoal.centered.action(ng-click="ungoal(selected)")>
           .centered-inner -10
-        .control.control-catch.centered>
+        .control.control-catch.centered.action(ng-click="catch(selected)")>
           .centered-inner Catch
         .control.control-card.centered>
           .centered-inner Card

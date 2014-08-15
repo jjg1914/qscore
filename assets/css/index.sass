@@ -1,5 +1,6 @@
 @import "compass/reset"
 @import "compass/css3/box-sizing"
+@import "compass/css3/user-interface"
 
 $black: #202030
 $white: #FFFFFF
@@ -33,6 +34,10 @@ body
   display: inline-block
   vertical-align: middle
 
+.action
+  cursor: pointer
+  @include user-select(none)
+
 .timer-main
   position: relative
   font-size: 300%
@@ -50,7 +55,6 @@ body
 
 .score
   display: inline-block
-  cursor: pointer
   height: 100%
   width: 50%
 
