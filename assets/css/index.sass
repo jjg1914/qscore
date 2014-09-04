@@ -4,7 +4,8 @@
 
 $black: #202030
 $white: #FFFFFF
-$green: #2CE943
+$gray: #BBBBBB
+$green: #23db23
 $yellow: #FFE130 
 $blue: #3499DB
 $orange: #FFE130 
@@ -38,6 +39,10 @@ body
   cursor: pointer
   @include user-select(none)
 
+.action-disabled
+  color: $gray
+  cursor: default
+
 .timer-main
   position: relative
   font-size: 300%
@@ -50,13 +55,15 @@ body
   font-size: 33%
 
 .score-board
-  font-size: 200%
   height: 16%
 
 .score
   display: inline-block
   height: 100%
   width: 50%
+
+.score-inner
+  font-size: 250%
 
 .score-selected
   background: $blue
@@ -76,6 +83,7 @@ body
   height: 2.5em
 
 .detail-catch
+  color: $black
   background: $yellow
 
 .detail-definition,
@@ -135,17 +143,9 @@ body
 
 .control
   display: inline-block
+  background: $purple
   width: 25%
   height: 100%
 
-.control-goal
-  background: $green
-
-.control-ungoal
-  background: $red
-
-.control-catch
-  background: $yellow
-
-.control-card
-  background: $purple
+.control-full
+  width: 100%

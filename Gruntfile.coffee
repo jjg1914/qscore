@@ -18,8 +18,6 @@ module.exports = (grunt) ->
         ext: '.css'
     haml:
       assets:
-        options:
-          require: './assets.rb'
         expand: true
         cwd: 'assets/html'
         src: [ '**/*.haml' ]

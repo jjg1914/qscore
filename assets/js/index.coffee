@@ -63,12 +63,23 @@ app.controller "AppController", ($scope,$timeout,timer) ->
   catches = []
   timeout = null
 
+  $scope.period = "regular"
+
   $scope.timer = new timer
 
   $scope.floor = 18 * 60 * 1000
 
+  $scope.newGame = ->
+    $scope.period = "regular"
+    $scope.timer = new timer
+    $scope.floor = 18 * 60 * 1000
+    delete $scope.overtime
+    goals.length = 0
+    catches.length = 0
+    $scope.selected = -2
+
   $scope.details = ->
-    goals.concat(catches).sort (a,b) ->
+    catches.concat(goals).sort (a,b) ->
       if a.at < b.at
         1
       else if a.at > b.at
@@ -78,27 +89,51 @@ app.controller "AppController", ($scope,$timeout,timer) ->
   $scope.selected = -2
 
   $scope.goal = (team_id) ->
-    goals.push
-      team_id: team_id
-      at: $scope.timer.ellapsed()
-      type: "goal"
-      name: "Goal"
+    if $scope.period != "game_over"
+      goals.push
+        team_id: team_id
+        at: $scope.timer.ellapsed()
+        type: "goal"
+        name: "Goal"
+      if $scope.period == "sudden_death"
+        $scope.timer.stop() if $scope.timer.isRunning()
+        $scope.selected += 2 unless $scope.selected >= 0
+        $scope.period = "game_over"
+        if $scope.score(0) > $scope.score(1)
+          $scope.selected = 0
+        else
+          $scope.selected = 1
 
   $scope.ungoal = (team_id) ->
-    for goal,i in goals by -1
-      if goal.team_id == team_id
-        goals.splice i, 1
-        break
+    if $scope.period != "game_over"
+      for goal,i in goals by -1
+        if goal.team_id == team_id
+          goals.splice i, 1
+          break
 
   $scope.catch = (team_id) ->
-    catches.push
-      team_id: team_id
-      at: $scope.timer.ellapsed()
-      type: "catch"
-      name: "Catch"
-    if $scope.score(0) == $scope.score(1)
-      $scope.overtime = $scope.timer.ellapsed() + (5 * 60 * 1000)
-      $scope.floor = $scope.timer.ellapsed() + (30 * 1000)
+    if $scope.timer.ellapsed() >= $scope.floor and $scope.period != "game_over"
+      catches.push
+        team_id: team_id
+        at: $scope.timer.ellapsed()
+        type: "catch"
+        name: "Catch"
+      if $scope.score(0) == $scope.score(1)
+        if $scope.period == "regular"
+          $scope.period = "overtime"
+          $scope.overtime = $scope.timer.ellapsed() + (5 * 60 * 1000)
+          $scope.floor = $scope.timer.ellapsed() + (30 * 1000)
+        else if $scope.period = "overtime"
+          $scope.period = "sudden_death"
+          delete $scope.overtime
+          $scope.floor = $scope.timer.ellapsed() + (30 * 1000)
+      else
+        $scope.period = "game_over"
+        delete $scope.overtime
+        if $scope.score(0) > $scope.score(1)
+          $scope.selected = 0
+        else
+          $scope.selected = 1
 
   $scope.scoreMouseup = (team_id) ->
     if timeout?
@@ -108,7 +143,8 @@ app.controller "AppController", ($scope,$timeout,timer) ->
 
   $scope.scoreMousedown = (team_id) ->
     if $scope.selected >= 0
-      $scope.selected = team_id
+      if $scope.period != "game_over"
+        $scope.selected = team_id
     else unless timeout? or not $scope.timer.isRunning()
       timeout = $timeout ->
         timeout = null
@@ -121,10 +157,20 @@ app.controller "AppController", ($scope,$timeout,timer) ->
     score += 30 for c in catches when c.team_id == team_id
     return score
 
-  $scope.toggle = ->
-    if $scope.timer.isRunning()
-      $scope.timer.stop()
-      $scope.selected += 2 unless $scope.selected >= 0
-    else
-      $scope.timer.start()
-      $scope.selected -= 2 unless $scope.selected < 0
+  $scope.timerMouseup = ->
+    if timeout?
+      $timeout.cancel timeout
+      timeout = null
+      if $scope.timer.isRunning()
+        $scope.timer.stop()
+        $scope.selected += 2 unless $scope.selected >= 0
+      else if $scope.period != "game_over"
+        $scope.timer.start()
+        $scope.selected -= 2 unless $scope.selected < 0
+
+  $scope.timerMousedown = ->
+    unless timeout?
+      timeout = $timeout ->
+        timeout = null
+        $scope.newGame()
+      , 1000
