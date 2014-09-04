@@ -106,7 +106,7 @@ app.controller "AppController", ($scope,$timeout,timer) ->
 
   $scope.goal = (team_id) ->
     if $scope.period != "game_over"
-      goals.push
+      goals.unshift
         team_id: team_id
         at: $scope.timer.ellapsed()
         type: "goal"
@@ -129,7 +129,7 @@ app.controller "AppController", ($scope,$timeout,timer) ->
 
   $scope.catch = (team_id) ->
     if $scope.timer.ellapsed() >= $scope.floor and $scope.period != "game_over"
-      catches.push
+      catches.unshift
         team_id: team_id
         at: $scope.timer.ellapsed()
         type: "catch"
