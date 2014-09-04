@@ -2,7 +2,7 @@
 %html(lang="en")
   %head
     %meta(charset="UTF-8")
-    %meta(name="viewport" content="initial-scale=1")
+    %meta(name="viewport" content="initial-scale=1,width=device-width,user-scalable=no")
     %title QScore
     %link(href="index.css" rel="stylesheet" type="text/css" media="all")
     %script(src="bower_components/angular/angular.js" type="text/javascript")
@@ -10,19 +10,19 @@
     %script(src="index.js" type="text/javascript")
   %body(ng-app="app" ng-controller="AppController")
     %main
-      .timer-main.centered.action(ng-mouseup="timerMouseup()"
-                                  ng-mousedown="timerMousedown()")
+      .timer-main.centered.action(q-press-end="timerMouseup()"
+                                  q-press-begin="timerMousedown()")
         .centered-inner {{ timer.ellapsed(overtime) | timerFormat }}
         .timer-full(ng-if="overtime") {{ timer.ellapsed() | timerFormat }}
       .timer-floor.centered
         .centered-inner {{ timer.ellapsed(floor) | timerFormat }}
       .score-board
-        .score.centered.action(ng-mouseup="scoreMouseup(0)"
-                               ng-mousedown="scoreMousedown(0)"
+        .score.centered.action(q-press-end="scoreMouseup(0)"
+                               q-press-begin="scoreMousedown(0)"
                                ng-class="{'score-selected': selected == 0}")>
           .score-inner.centered-inner {{ score(0) }}
-        .score.centered.action(ng-mouseup="scoreMouseup(1)"
-                               ng-mousedown="scoreMousedown(1)"
+        .score.centered.action(q-press-end="scoreMouseup(1)"
+                               q-press-begin="scoreMousedown(1)"
                                ng-class="{'score-selected': selected == 1}")>
           .score-inner.centered-inner {{ score(1) }}
       %ol.details(ng-class="{'details-selected': selected >= 0}")

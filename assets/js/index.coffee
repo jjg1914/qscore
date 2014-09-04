@@ -58,6 +58,22 @@ app.filter "timerFormat", ->
     minutes = Math.floor value / 60
     minutes + ":" + seconds + ":" + milli
 
+app.directive "qPressBegin", ->
+  restrict: "A"
+  link: ($scope,$element,attributes) ->
+    $element.on "mousedown touchstart", (e) ->
+      $scope.$apply ->
+        $scope.$eval attributes.qPressBegin
+      e.preventDefault()
+
+app.directive "qPressEnd", ->
+  restrict: "A"
+  link: ($scope,$element,attributes) ->
+    $element.on "mouseup touchend", (e) ->
+      $scope.$apply ->
+        $scope.$eval attributes.qPressEnd
+      e.preventDefault()
+
 app.controller "AppController", ($scope,$timeout,timer) ->
   goals = []
   catches = []
